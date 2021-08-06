@@ -224,7 +224,7 @@ resource "aws_instance" "ecs-amlinux2" {
   vpc_security_group_ids = [aws_security_group.ecs_sg.id]
   iam_instance_profile = "SSMRoleEC2"
   
-  #install docker and docker compose script
+  #install docker and docker compose script to be deployed
   user_data = <<-EOF
 
     #!/bin/bash
