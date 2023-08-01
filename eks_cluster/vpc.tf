@@ -3,7 +3,7 @@
 resource "aws_vpc" "dev" {
   cidr_block = "10.0.0.0/16"
     tags = {
-    Name = "dev-vpc"
+    Name = "dev-vpc-tf"
   }
 }
 
@@ -124,11 +124,13 @@ resource "aws_route_table_association" "private_route_table_association_c" {
 }
 
 #Security Group creation section
-resource "aws_security_group" "dev" {
-  name        = "dev-security-group"
-  description = "Allow ports 80, 443, 22, and 65535"
+resource "aws_security_group" "web" {
+  name        = "web-security-group"
+  description = "Allow ports 80, 443, 22"
+  vpc_id = aws_vpc.dev.id
+  
     tags = {
-    Name = "dev-security-group"
+    Name = "web-security-group"
   }
   
   ingress {
@@ -167,3 +169,28 @@ resource "aws_security_group" "dev" {
   }
 }
 
+resource "aws_security_group" "bastion" {
+    name = "bastion-security-group"
+    description = "Allow ports 22"
+    vpc_id = aws_vpc.dev.id
+    
+    tags = {
+    Name = "bastion-security-group"
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Adjust this to restrict the IP range if needed
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+
+}

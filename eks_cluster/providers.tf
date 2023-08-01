@@ -1,11 +1,17 @@
 terraform {
-  required_providers {
-    aws = {
-      version = "= 5.6.2"
+  cloud {
+    organization = "bryanmartineze-devops"
+
+    workspaces {
+      name = "cicd-pipeline-example"
     }
   }
 }
 
+variable "aws_region" {
+    
+}
+
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
