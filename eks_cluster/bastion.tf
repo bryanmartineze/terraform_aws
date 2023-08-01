@@ -10,11 +10,6 @@ resource "tls_private_key" "rsa" {
   rsa_bits  = 4096
 }
 
-resource "local_file" "bastion_key" {
-    content  = tls_private_key.rsa.private_key_pem
-    filename = "bastion_key"
-}
-
 
 #Fetching latest amazon linux 2023
 data "aws_ami" "latest_amazon_linux_2023" {
@@ -47,3 +42,8 @@ resource "aws_instance" "bastion_host" {
 }
 
 
+# Output the private key content
+output "bastion_key" {
+  sensitive = true
+  value = tls_private_key.rsa.private_key_pem
+}

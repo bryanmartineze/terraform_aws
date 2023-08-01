@@ -1,6 +1,8 @@
 
 #Create VPC
 resource "aws_vpc" "dev" {
+  enable_dns_support   = true
+  enable_dns_hostnames = true
   cidr_block = "10.0.0.0/16"
     tags = {
     Name = "dev-vpc-tf"
@@ -18,6 +20,7 @@ resource "aws_internet_gateway" "dev" {
 #Public subnets sections
 resource "aws_subnet" "public_subnet_a" {
   vpc_id            = aws_vpc.dev.id
+  map_public_ip_on_launch = true
   enable_resource_name_dns_a_record_on_launch = true
   cidr_block        = "10.0.48.0/20"
   availability_zone = "us-east-1a"
@@ -28,6 +31,7 @@ resource "aws_subnet" "public_subnet_a" {
 
 resource "aws_subnet" "public_subnet_b" {
   vpc_id            = aws_vpc.dev.id
+  map_public_ip_on_launch = true
   enable_resource_name_dns_a_record_on_launch = true
   cidr_block        = "10.0.64.0/20"
   availability_zone = "us-east-1b"
@@ -39,6 +43,7 @@ resource "aws_subnet" "public_subnet_b" {
 
 resource "aws_subnet" "public_subnet_c" {
   vpc_id            = aws_vpc.dev.id
+  map_public_ip_on_launch = true
   enable_resource_name_dns_a_record_on_launch = true
   cidr_block        = "10.0.80.0/20"
   availability_zone = "us-east-1c"
@@ -157,6 +162,37 @@ resource "aws_security_group" "web" {
   ingress {
     from_port   = 65535
     to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "db" {
+  name        = "db-security-group"
+  description = "Allow ports 3306, 22"
+  vpc_id = aws_vpc.dev.id
+  
+    tags = {
+    Name = "web-security-group"
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
