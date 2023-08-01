@@ -6,6 +6,12 @@ terraform {
       name = "cicd-pipeline-example"
     }
   }
+  
+    required_providers {
+    aws = {
+      version = ">= 5.6.2"
+    }
+  }
 }
 
 variable "aws_region" {
